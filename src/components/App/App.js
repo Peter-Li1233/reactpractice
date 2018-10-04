@@ -1,25 +1,18 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import axios from 'axios';
+import API from '../../utils/API';
 import './App.css';
+import Search from '../Search';
+import Table from '../Table';
+import Button from '../Button';
 
-const DEFAULT_QUERY = 'redux';
-// const DEFAULT_HPP = '100';
+import {
+    DEFAULT_QUERY,
+    PATH_BASE,
+    PATH_SEARCH,
+    PARAM_SEARCH,
+    PARAM_PAGE
+} from '../../constants';
 
-const PATH_BASE = 'https://hn.algolia.com/api/v1';
-const PATH_SEARCH = '/search';
-const PARAM_SEARCH = 'query=';
-const PARAM_PAGE = 'page=';
-// const PARAM_HPP = 'hitsPerPage='
-
-// const url = `${PATH_BASE}${PATH_SEARCH}${PARAM_SEARCH}${DEFAULT_QUERY}`;
-// console.log(url);
-                                                                                                                                                                                                                                                                                                               
-// function isSearched(searchTerm) {
-//   return function(item) {
-//     return item.title.toLowerCase().includes(searchTerm.toLowerCase());
-//   }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
-// }
 
 class App extends Component {
   _isMounted = false;
@@ -68,7 +61,7 @@ class App extends Component {
   }
 
   fetchSearchTopStories(searchTerm, page = 0) {
-    axios(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}`)
+    API.getArticles(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}`)
       .then(result => this._isMounted && this.setSearchTopStories(result.data))
       .catch(error => this._isMounted && this.setState({error}));
   }
@@ -156,64 +149,6 @@ class App extends Component {
       </div>
     );
   }
-}
-
-const Search = ({value, onChange, onSubmit,children}) => 
-  <form onSubmit={onSubmit}>
-    <input
-      type = "text"
-      value ={value}
-      onChange = {onChange}
-    />
-    <button type="submit">
-      {children}
-    </button>   
-  </form>
-
-const Table = ({list, onDismiss}) => {  
-  const largeColumn = {
-    width: '40%',
-  }
-  const midColumn = {
-    width: '30%',
-  }
-  const smallColumn = {
-    width: '10%',
-  }
-  return (
-  <div className="table">
-    {list.map(item => 
-      <div key={item.objectID} className="table-row">
-        <span style = {largeColumn}>
-          <a href={item.url}>{item.title}</a>
-        </span>
-        <span style ={midColumn}>{item.author}</span>
-        <span style ={smallColumn}>{item.num_comments}</span>
-        <span style ={smallColumn} >{item.points}</span>
-        <span style ={smallColumn}>
-          <Button
-            onClick={() => onDismiss(item.objectID)}
-            type="button"
-            className = "button-inline"
-          >
-          Dismiss
-          </Button>
-        </span>
-      </div>
-    )}  
-  </div>
-  )
-  }
-
-const Button =({onClick,  className = '',  children}) =>
-  <button
-    onClick = {onClick}
-    className = {className}
-    type= "button"
-  >
-    {children}
-
-  </button>
-    
+};
 
 export default App;
